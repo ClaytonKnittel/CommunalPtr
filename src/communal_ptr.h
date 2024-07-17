@@ -7,11 +7,11 @@ namespace paige {
 // TODO: Define type `CommunalPtr`, which takes a single template type argument
 // and has the same interface as `std::shared_ptr`.
 
+template <typename T>
 class CommunalPtr {
  private:
-  // std::vector<typename T> references;
   std::vector<CommunalPtr*>* references;
-  int* value;
+  T* value;
 
  public:
   // default constructor
@@ -21,7 +21,7 @@ class CommunalPtr {
 
   // non default constructor
   explicit CommunalPtr(int val) {
-    value = new int;
+    value = new T;
     *value = val;
     references = new std::vector<CommunalPtr*>;
     references->push_back(this);

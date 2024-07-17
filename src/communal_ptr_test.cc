@@ -104,9 +104,7 @@ REGISTER_TYPED_TEST_SUITE_P(CommunalPtrTest, Uninitialized, Construct, Destroy,
                             Copy, UseCopyAfterOriginalDestroyed, Move,
                             UseMoveAfterOriginalDestroyed);
 
-INSTANTIATE_TYPED_TEST_SUITE_P(CommunalPtr, CommunalPtrTest,
-                               TemplateWrapper<std::shared_ptr>);
 // TODO: uncomment and remove previous line to test your code.
-// INSTANTIATE_TYPED_TEST_SUITE_P(CommunalPtr, CommunalPtrTest,
-//                                TemplateWrapper<std::shared_ptr>,
-//                                TemplateWrapper<paige::CommunalPtr>);
+INSTANTIATE_TYPED_TEST_SUITE_P(CommunalPtr, CommunalPtrTest,
+                               TemplateWrapper<std::shared_ptr>,
+                               TemplateWrapper<paige::CommunalPtr>);
