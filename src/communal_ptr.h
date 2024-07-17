@@ -21,9 +21,9 @@ class CommunalPtr {
 
   // non default constructor
   explicit CommunalPtr(int val) {
-    int* value = new int;
+    value = new int;
     *value = val;
-    auto* references = new std::vector<CommunalPtr*>;
+    references = new std::vector<CommunalPtr*>;
     references->push_back(this);
   }
 
@@ -43,7 +43,14 @@ class CommunalPtr {
     return *this;
   }
 
-  void get() {}
+  // overload dereference opperator
+  int& operator*() {
+    return *value;
+  }
+
+  int* get() {
+    return value;
+  }
 
   bool empty() {
     return references->size() == 0;
