@@ -105,6 +105,6 @@ REGISTER_TYPED_TEST_SUITE_P(CommunalPtrTest, Uninitialized, Construct, Destroy,
                             UseMoveAfterOriginalDestroyed);
 
 // TODO: uncomment and remove previous line to test your code.
-INSTANTIATE_TYPED_TEST_SUITE_P(CommunalPtr, CommunalPtrTest,
-                               TemplateWrapper<std::shared_ptr>,
-                               TemplateWrapper<paige::CommunalPtr>);
+using Implementations = testing::Types<TemplateWrapper<std::shared_ptr>,
+                                       TemplateWrapper<paige::CommunalPtr>>;
+INSTANTIATE_TYPED_TEST_SUITE_P(CommunalPtr, CommunalPtrTest, Implementations);

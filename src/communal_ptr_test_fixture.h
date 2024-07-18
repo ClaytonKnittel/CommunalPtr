@@ -65,12 +65,13 @@ CommunalPtrTest<TemplateWrapper<std::shared_ptr>>::MakeShared(Args&&... args) {
 }
 
 // TODO: uncomment after you have defined `CommunalPtr`.
-// template <>
-// template <typename T, typename... Args>
-// paige::CommunalPtr<T>
-// CommunalPtrTest<TemplateWrapper<paige::CommunalPtr>>::MakeShared(
-//     Args&&... args) {
-//   // TODO: construct a CommunalPtr of type `T` from `args`.
-// }
+template <>
+template <typename T, typename... Args>
+paige::CommunalPtr<T>
+CommunalPtrTest<TemplateWrapper<paige::CommunalPtr>>::MakeShared(
+    Args&&... args) {
+  // TODO: construct a CommunalPtr of type `T` from `args`.
+  return paige::CommunalPtr(new T(std::forward<Args>(args)...));
+}
 
 TYPED_TEST_SUITE_P(CommunalPtrTest);
