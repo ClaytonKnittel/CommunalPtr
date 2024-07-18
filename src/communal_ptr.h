@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 
 namespace paige {
@@ -10,32 +11,31 @@ namespace paige {
 template <typename T>
 class CommunalPtr {
  private:
-  std::vector<CommunalPtr*>* references_;
   T* value_;
+  int* references_count_;
 
  public:
   // default constructor
-  explicit CommunalPtr() : references_(nullptr), value_(nullptr) {}
+  explicit CommunalPtr() : references_count_(nullptr), value_(nullptr) {}
 
   // non default constructor
-  explicit CommunalPtr(T* val) {
-    value_ = new T;
-    value_ = val;
-    references_ = new std::vector<CommunalPtr*>;
-    references_->push_back(this);
+  explicit CommunalPtr(T* val) : value_(val) {
+    references_count_ = new int(1);
+    std::cerr << "push new ptr " << this << std::endl;
   }
 
   // copy constructor
   CommunalPtr(const CommunalPtr& ptr)
-      : references_(ptr.references_), value_(ptr.value_) {
+      : value_(ptr.value_), references_count_(ptr.references_count_) {
     if (value_ != nullptr) {
-      references_->push_back(this);
+      references_count_++;
+      std::cerr << "push copied ptr " << this << std::endl;
     }
   }
 
   void swap(CommunalPtr& ptr1) {
-    std::swap(ptr1.references_, this->references_);
     std::swap(ptr1.value_, this->value_);
+    std::swap(ptr1.references_count_, this->references_count_);
   }
 
   // overload assignment opperator
@@ -59,22 +59,27 @@ class CommunalPtr {
   }
 
   bool empty() {
-    return references_ == nullptr;
-    // return references_->size() == 0;
+    return *references_count_ == 0;
   }
 
   int use_count() {
-    if (references_ == nullptr) {
+    if (references_count_ == nullptr) {
       return 0;
     }
-    return references_->size();
+    return *references_count_;
   }
 
   // destructor
   ~CommunalPtr() {
-    if (empty()) {
-      delete value_;
-      delete references_;
+    // if there are references, delete the this copy
+    if (*references_count_ != 0) {
+      std::cerr << "deleting ptr " << this << std::endl;
+      references_count_--;
+      // if the last reference of the ptr was removed, delete the ptr as a whole
+      if (empty()) {
+        delete value_;
+        delete references_count_;
+      }
     }
   }
 };
