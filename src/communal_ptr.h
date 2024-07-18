@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 
 namespace paige {
 
@@ -31,6 +30,14 @@ class CommunalPtr {
       *references_count_ += 1;
       std::cerr << "push copied ptr " << this << std::endl;
     }
+  }
+
+  // move constructor
+  CommunalPtr(CommunalPtr&& ptr) noexcept
+      : value_(ptr.value_), references_count_(ptr.references_count_) {
+    ptr.value_ = nullptr;
+    ptr.references_count_ = 0;
+    std::cerr << "moved ptr " << this << std::endl;
   }
 
   void swap(CommunalPtr& ptr1) {
