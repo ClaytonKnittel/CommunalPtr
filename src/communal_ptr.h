@@ -28,7 +28,7 @@ class CommunalPtr {
   CommunalPtr(const CommunalPtr& ptr)
       : value_(ptr.value_), references_count_(ptr.references_count_) {
     if (value_ != nullptr) {
-      references_count_++;
+      *references_count_ += 1;
       std::cerr << "push copied ptr " << this << std::endl;
     }
   }
@@ -72,9 +72,9 @@ class CommunalPtr {
   // destructor
   ~CommunalPtr() {
     // if there are references, delete the this copy
-    if (*references_count_ != 0) {
+    if ((references_count_ != nullptr) && (*references_count_ != 0)) {
       std::cerr << "deleting ptr " << this << std::endl;
-      references_count_--;
+      *references_count_ -= 1;
       // if the last reference of the ptr was removed, delete the ptr as a whole
       if (empty()) {
         delete value_;
