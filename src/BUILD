@@ -1,6 +1,8 @@
 cc_library(
     name = "communal_ptr",
     hdrs = ["communal_ptr.h"],
+    deps = [
+    ],
 )
 
 cc_library(
