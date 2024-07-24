@@ -16,6 +16,7 @@ cc_library(
 
 cc_test(
     name = "communal_ptr_test",
+    size = "small",
     srcs = ["communal_ptr_test.cc"],
     deps = [
         ":communal_ptr",

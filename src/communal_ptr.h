@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <utility>
 
 namespace paige {
 
@@ -15,12 +15,11 @@ class CommunalPtr {
 
  public:
   // default constructor
-  explicit CommunalPtr() : references_count_(nullptr), value_(nullptr) {}
+  explicit CommunalPtr() : value_(nullptr), references_count_(nullptr) {}
 
   // non default constructor
   explicit CommunalPtr(T* val) : value_(val) {
     references_count_ = new int(1);
-    std::cerr << "push new ptr " << this << std::endl;
   }
 
   // copy constructor
@@ -28,7 +27,6 @@ class CommunalPtr {
       : value_(ptr.value_), references_count_(ptr.references_count_) {
     if (value_ != nullptr) {
       *references_count_ += 1;
-      std::cerr << "push copied ptr " << this << std::endl;
     }
   }
 
@@ -37,7 +35,6 @@ class CommunalPtr {
       : value_(ptr.value_), references_count_(ptr.references_count_) {
     ptr.value_ = nullptr;
     ptr.references_count_ = 0;
-    std::cerr << "moved ptr " << this << std::endl;
   }
 
   void swap(CommunalPtr& ptr1) {
@@ -80,7 +77,6 @@ class CommunalPtr {
   ~CommunalPtr() {
     // if there are references, delete the this copy
     if ((references_count_ != nullptr) && (*references_count_ != 0)) {
-      std::cerr << "deleting ptr " << this << std::endl;
       *references_count_ -= 1;
       // if the last reference of the ptr was removed, delete the ptr as a whole
       if (empty()) {

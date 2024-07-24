@@ -100,9 +100,58 @@ TYPED_TEST_P(CommunalPtrTest, UseMoveAfterOriginalDestroyed) {
   EXPECT_TRUE(*destructor_flag);
 }
 
+TYPED_TEST_P(CommunalPtrTest, UseCopyAfterMove) {
+  auto shared = this->template MakeShared<DestructorFlag<uint64_t>>();
+  void* ptr = shared.get();
+  auto destroyed_flag = shared->GetDestroyedFlag();
+  auto copy = std::move(shared);
+  auto copy2 = copy;
+
+  EXPECT_EQ(shared.get(), nullptr);
+  EXPECT_EQ(copy.get(), ptr);
+  EXPECT_EQ(copy2.get(), ptr);
+  EXPECT_EQ(shared.use_count(), 0);
+  EXPECT_EQ(copy.use_count(), 2);
+  EXPECT_EQ(copy2.use_count(), 2);
+  EXPECT_FALSE(*destroyed_flag);
+}
+
+TYPED_TEST_P(CommunalPtrTest, UseMoveAfterCopy) {
+  auto shared = this->template MakeShared<DestructorFlag<uint64_t>>();
+  void* ptr = shared.get();
+  auto destroyed_flag = shared->GetDestroyedFlag();
+  auto copy = shared;
+  auto copy2 = std::move(shared);
+
+  EXPECT_EQ(shared.get(), nullptr);
+  EXPECT_EQ(copy.get(), ptr);
+  EXPECT_EQ(copy2.get(), ptr);
+  EXPECT_EQ(shared.use_count(), 0);
+  EXPECT_EQ(copy.use_count(), 2);
+  EXPECT_EQ(copy2.use_count(), 2);
+  EXPECT_FALSE(*destroyed_flag);
+}
+
+TYPED_TEST_P(CommunalPtrTest, UseMoveAfterCopy2) {
+  auto shared = this->template MakeShared<DestructorFlag<uint64_t>>();
+  void* ptr = shared.get();
+  auto destroyed_flag = shared->GetDestroyedFlag();
+  auto copy = shared;
+  auto copy2 = std::move(copy);
+
+  EXPECT_EQ(shared.get(), ptr);
+  EXPECT_EQ(copy.get(), nullptr);
+  EXPECT_EQ(copy2.get(), ptr);
+  EXPECT_EQ(shared.use_count(), 2);
+  EXPECT_EQ(copy.use_count(), 0);
+  EXPECT_EQ(copy2.use_count(), 2);
+  EXPECT_FALSE(*destroyed_flag);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(CommunalPtrTest, Uninitialized, Construct, Destroy,
                             Copy, UseCopyAfterOriginalDestroyed, Move,
-                            UseMoveAfterOriginalDestroyed);
+                            UseMoveAfterOriginalDestroyed, UseCopyAfterMove,
+                            UseMoveAfterCopy, UseMoveAfterCopy2);
 
 // TODO: uncomment and remove previous line to test your code.
 using Implementations = testing::Types<TemplateWrapper<std::shared_ptr>,
