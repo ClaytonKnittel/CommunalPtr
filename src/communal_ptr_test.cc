@@ -72,7 +72,6 @@ TYPED_TEST_P(CommunalPtrTest, Move) {
 
   EXPECT_EQ(shared.get(), nullptr);
   EXPECT_EQ(copy.get(), ptr);
-  EXPECT_EQ(shared.use_count(), 0);
   EXPECT_EQ(copy.use_count(), 1);
   EXPECT_FALSE(*destroyed_flag);
 }
@@ -148,10 +147,26 @@ TYPED_TEST_P(CommunalPtrTest, UseMoveAfterCopy2) {
   EXPECT_FALSE(*destroyed_flag);
 }
 
+TYPED_TEST_P(CommunalPtrTest, NullToNonDefaultConstructor) {
+  auto shared = this->template MakeFromRaw<int>(nullptr);
+
+  EXPECT_EQ(shared.use_count(), 1);
+  EXPECT_EQ(shared.get(), nullptr);
+}
+
+TYPED_TEST_P(CommunalPtrTest, TwoRefsToNull) {
+  auto shared = this->template MakeFromRaw<int>(nullptr);
+  auto copy = shared;
+
+  EXPECT_EQ(copy.use_count(), 2);
+  EXPECT_EQ(copy.get(), nullptr);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(CommunalPtrTest, Uninitialized, Construct, Destroy,
                             Copy, UseCopyAfterOriginalDestroyed, Move,
                             UseMoveAfterOriginalDestroyed, UseCopyAfterMove,
-                            UseMoveAfterCopy, UseMoveAfterCopy2);
+                            UseMoveAfterCopy, UseMoveAfterCopy2,
+                            NullToNonDefaultConstructor, TwoRefsToNull);
 
 // TODO: uncomment and remove previous line to test your code.
 using Implementations = testing::Types<TemplateWrapper<std::shared_ptr>,

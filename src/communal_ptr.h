@@ -9,10 +9,6 @@ namespace paige {
 
 template <typename T>
 class CommunalPtr {
- private:
-  T* value_;
-  int* references_count_;
-
  public:
   // default constructor
   explicit CommunalPtr() : value_(nullptr), references_count_(nullptr) {}
@@ -25,7 +21,7 @@ class CommunalPtr {
   // copy constructor
   CommunalPtr(const CommunalPtr& ptr)
       : value_(ptr.value_), references_count_(ptr.references_count_) {
-    if (value_ != nullptr) {
+    if (references_count_ != nullptr) {
       *references_count_ += 1;
     }
   }
@@ -34,7 +30,7 @@ class CommunalPtr {
   CommunalPtr(CommunalPtr&& ptr) noexcept
       : value_(ptr.value_), references_count_(ptr.references_count_) {
     ptr.value_ = nullptr;
-    ptr.references_count_ = 0;
+    ptr.references_count_ = nullptr;
   }
 
   void swap(CommunalPtr& ptr1) {
@@ -42,28 +38,24 @@ class CommunalPtr {
     std::swap(ptr1.references_count_, this->references_count_);
   }
 
-  // overload assignment opperator
+  // overload assignment operator
   CommunalPtr& operator=(const CommunalPtr& ptr) {
     CommunalPtr(ptr).swap(*this);
     return *this;
   }
 
-  // overload dereference opperator
+  // overload dereference operator
   T& operator*() {
     return *value_;
   }
 
-  // overload arrow opperator
+  // overload arrow operator
   T* operator->() {
     return value_;
   }
 
   T* get() {
     return value_;
-  }
-
-  bool empty() {
-    return *references_count_ == 0;
   }
 
   int use_count() {
@@ -76,15 +68,19 @@ class CommunalPtr {
   // destructor
   ~CommunalPtr() {
     // if there are references, delete the this copy
-    if ((references_count_ != nullptr) && (*references_count_ != 0)) {
+    if (references_count_ != nullptr) {
       *references_count_ -= 1;
       // if the last reference of the ptr was removed, delete the ptr as a whole
-      if (empty()) {
+      if (*references_count_ == 0) {
         delete value_;
         delete references_count_;
       }
     }
   }
+
+ private:
+  T* value_;
+  int* references_count_;
 };
 
 }  // namespace paige

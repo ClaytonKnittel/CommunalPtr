@@ -55,6 +55,9 @@ class CommunalPtrTest : public ::testing::Test {
 
   template <typename T, typename... Args>
   PtrT<T> MakeShared(Args&&... args);
+
+  template <typename T>
+  PtrT<T> MakeFromRaw(T* raw);
 };
 
 template <>
@@ -72,6 +75,20 @@ CommunalPtrTest<TemplateWrapper<paige::CommunalPtr>>::MakeShared(
     Args&&... args) {
   // TODO: construct a CommunalPtr of type `T` from `args`.
   return paige::CommunalPtr(new T(std::forward<Args>(args)...));
+}
+
+template <>
+template <typename T>
+std::shared_ptr<T>
+CommunalPtrTest<TemplateWrapper<std::shared_ptr>>::MakeFromRaw(T* raw) {
+  return std::shared_ptr<T>(raw);
+}
+
+template <>
+template <typename T>
+paige::CommunalPtr<T>
+CommunalPtrTest<TemplateWrapper<paige::CommunalPtr>>::MakeFromRaw(T* raw) {
+  return paige::CommunalPtr<T>(raw);
 }
 
 TYPED_TEST_SUITE_P(CommunalPtrTest);
